@@ -1,0 +1,388 @@
+																			### Azure Administrator ###
+																			
+	- PowerShell and CLI
+		- Scripting is used for automation
+		- reduce errors on repetitve tasks
+		- form of documentation
+		
+		- Basic CLI Commands:
+			- az service_name list: list all services
+			- az service_name create: create
+			- az service_name delete: delete
+			eg: az vm list: list all the VMs
+				az vm create: create a new vm
+				az cm delete: delete a new vm
+				
+		- PowerShell Commands:
+			- Get-AzVM: list all the VMs
+			- New-AzVM: create a new VM
+			- Remove-AzVM: removes a VM
+			
+	- Azure AD:
+		- Cloud first or cloud only active directory.
+		- For remote branches with limited on perm-infrastructure
+		
+		- Azure Directory Identity Protection:
+			- it is a series of machine learning algorithm that will analyze the users, logins and any vunerabilities
+			
+		- Conditional Access:
+			- We can provide different conditions for the sign in
+			- The platform device like Windows, Android, iOS
+			- We can give the geographical location
+			
+		- Access Review:
+			- Review and reduce employee and guest's group memberships and access to enterprise applications
+			- Organize and track review for compliance and risk management
+			- Clean up guest users in Office groups
+		
+		- Adminstrative units:
+			- restricts permission in a role to any portion of your orqanization that you define
+			
+		- Local Administrator are added from the Devices blade section
+		
+		- Ways to assign access rights:
+			- Direct Assignment: Assign a user the required access by directly assigning a rolt that has those rights.
+			- Group Assignment: Assign a group the required access and member will inherit those rights.
+			- Rule-based assignment: Use rules to determine a group membership based on user or device properties
+			
+		- Azure AD defines users in three ways:
+			- Cloud Identities: Exist only in Azure AD. Administrator accs and users that you manage yourself.Their source is Azure Active directory and or External azure AD if defined in another azure AD
+			- Directory-synchronized Identities: these users exist in on-premise Active directory. Source is Windows Server AD
+			- Guest Users: These users exist outside Azure.
+			
+			
+		~ Tenant:
+			- A representation of an organization
+			- Usually represented by a pulic domain name
+			- A dedicated instance of Azure Active directory
+			
+		- Subscription:
+			- An agreement with Microsoft to use Azure services and how to pay for that
+				- Free Subscriptions
+				- Pay as you go
+				- Enterprise Agreements
+				
+		~~ Not every tenant needs to have a subscription
+		~~ Tenants have more than one subscription
+		
+		~ Resource:
+			- An entity managed by Azureeg: Virtual Machine, web app, storage account
+			- Accounts can given read, update owner rights to rsources
+			
+		~ Resource Groups:
+			- A way of organizing resources in a subscription
+			- A folder structure
+			- All resources must belong to one resource 
+			- Resource group can be deleted
+			- A way to seprating out projects
+			- we can do budgeting and cost analyze
+			
+		- Resource locks:
+			- we can add locks to the resources to prevent change it
+			- we add read only lock
+			
+		- Azure Policy:
+			- define policies to enforce company standards and SLAs
+			- built-in Policies(appply certain conditions)
+			- We can start the Policy Scan in the power shll(Start-AzPolicyComplianceScan resoucegroupname res)
+			
+			To define Policy through PowerShell:
+				- Get-AzPolicyDefinition: displays all policy
+				- Get-AzPolicyDefinition | Where-Object { $_.Properties.DisplayName -eq "Audit missing tag on resources" } : filters through all policies and displays whose name matches with given name
+				- Assign the above to object by $ObjectName = above command
+				- New-AzResourceGroup -Name "mynewrg" -Location "East US" : create a new resource
+				  eg: $rg = Get-AzPolicyDefinition -Name 'mynewrg" -Location "East US"
+					  To get the details of the resource we can by $rg.Resource, ResourceGroupName, ResourceId
+					  
+					  
+	- Create and Configure Storage Accounts:
+
+		- Storage Account:
+			It is a container that groups a set of Azure Storage Service together.
+			Azure Files, blobs, Queues and Tables.
+			A stroage account defines a policy that applies to all the storage services in the account.
+
+		- Disk Roles:
+			- OS Disk: contains operating system of the virtual machine
+			- Data Disk: add one or  more data virtual disks to each virtual machine to store data.
+			- Temporary Disk: which is used for short-term storage applications such as page files and swap files.
+
+			- Ephemoral OS disks: 
+				- it is a virtual disk that saves data on the local virtual machine storage.
+				- has faster read-and-write latency than a managed disk
+				- work well when you want to host a stateless workload
+
+			- Managed Disks:
+				- a virtual hard disk for which azure manages all the required physical infrastructure.
+				- They are Simply Scalable, High Availability, Integration with availability sets and zones, support for azure backup, granular access control
+
+			- Unmanaged Disks:
+				- it is like a managed disk is stored as a page blob in Azure Storage account. 
+
+		- Access Keys: 
+			- are used to authenticate your applications when making requests to this azure storage account.
+			- Store your access keys securely.
+
+		- Shared Access Signature:
+			- A shared access signature is a URL that grants restricted access rights to Azure storage resources.
+			- provides SAS to those clients who should not be trusted with your storage account key but whome you wish to delegate access to certain storage accounts
+		
+		- Storage Explorer:
+			- It is a web based software that we can download and it connect to the storage account
+
+		- Log Analytics:
+			- Monitoring of the storage resources(upload of data, download, removal)
+			- set the alert rule which gave alerts when certain limits will exceed
+			- We have to add diagnotic for the new resource to diagnose
+			- We can run the prewritten query 
+			- Insights to show performance of storage account
+
+		- Redundant Storage:
+			- a copy of the storage is always made to protect from the transient failure
+			- if a failure happen to a storage than the copy will be used to restore
+			- We can redundant Locally or Geo-Redundant storage
+
+		- The storage account secondary endpoint will become the primary endpoint after the failover completes.
+
+		- Through RBAC also we can control the storage account.
+
+		- Replication option for azure Storage:
+			- Locally Redundant Storage
+			- Geographically Redundant Storage
+			- Read-Access Geo Redundant Storage
+			- Zone Redundant Storage
+			- Geo-zone Redundant Storage
+
+		- AzCopy is a command line utility that you can use to copy blobs or files to or from a storage account
+
+		- Access Tier:
+			- how much you charged for storage and for access
+			- hot: default tier
+			- cool: pay half for storage and pay double for access
+			- archieve: has lowest charge for storage but higher data cost for access and it may take hours to retrieve
+
+		- Lifecycle management offers a rich, rule-based policy for general purpose v2 and blob storage accounts
+
+		- When object replication is enabled blobs are copied asynchronously from a source storage account to a destination account.
+		- We have to setup import/export jobs to move large files.
+
+		- CDN:
+			- allows you to improve performance by removing the burden of serving static, unchanging files from the main server to a network of servers
+			- reduce traffic to a server
+
+		- Azure File Sync:
+			- used as a file distribution service
+			- to sync your server with azure file sync
+			- used to centralize your organization's file shares in azure files, while keeping the flexibility, performance and comptability of an on-premises file  server.
+			- Azure File Sync transforms Windows Server into a quick cache of your azure file share.
+
+		- SMB Protocol requires TCP port 445 to be open, connections will fail if port 445 is blocked.
+
+		- Azure Backup:
+			- create a Recovery Services vault for backup.
+			- choose the workload(azure, on-premises)
+			- choose system for backup(VM, fileshare) 
+			- choose the back up policy(specify all the scheduled information here)
+			- Goal is prevent data loss by backing up virtual machine and other resources that stores data
+
+		- File Recovery is used to pull particular file from the backup.
+
+		- Backup Reports:
+			- we can do the diagonstic and set the alerts for the backup
+			- Pwer BI is used to view report, dashboard,download report and create custom report
+
+		- Soft Delete:
+			- Recovery Services Vault
+			- Enabled by default on new RSV
+			- 14 days to delete backup data
+			- can be undelete
+
+		- Azure Site Recovery:
+			- it means replicating an Azure VM to a different Azure Region directly from the azure portal.
+			- Site Recovery is automatically updated with the new azure features as they are released.
+			- Minimize the recovery issues
+			- keep application available during outages with automatic recovery
+
+
+
+	- Azure Virtual Machine:
+		- Availability Set:
+			- fault domain: vm in same fault domain share a commom power source and physical network switch
+			- updated domain: VM in the same update domain will be restarted together during planned maintenance. Azure never restart more than on update domain at same time.
+
+		- Azure Monitoring collects host-level metrics-like CPU Utilization, disk and network usage for all virtual machines without any additional software.
+
+		- If we want to add aditional configurations, agents, scripts or applications via virtual machine extension that will run after deployment of VM.
+		- Custom Script Extension is a tool that can be used to automatically lunch and execute VM, customization tasks post configurations.
+
+		- Azure Bastion Service:
+			- a more secure way of connecting to a remote environment directly from the azure portal without requiring any public IP.
+
+		- Virtual Machine Scale Set:
+			- Azure virtual machine scale sets let you create and manage a group of identical, load balanced VMs.
+			- The number of VM instances can automatically increase or decrease in response to demand or a defined schedule.
+
+		- Create VM through Power Shell:
+			- To create new VM: New-AzVM -ResourceGroupName "name_of _res_group" -Name "vm_name" -Location "location" -VirtualNetwork " " -SubnetName "default" 
+			  -SecurityGroupName "name" -PublicIpAddressName "ipadd" -OpenPorts 80,443,3389
+			- After creation we have to give user ceredentials
+
+		- Stop and Start VM in PowerShell:
+			- Stop: Stop-AzVM -ResourceGroupName "name" -Name "name"
+			- Start: Start-AzVM -ResourceGroupName "name" -Name "name"
+
+
+	- We have a template file, we can download after the deployment is commplete.
+	- Template is a json file contains parameters, variable, resources, version no and the $schema(mandatory field).
+
+	- To modify an existing VM through ARM templates compulsory change these properties Network Interface Card, Public IP Address, Vitual Machine Name.
+	- We can deploy using powershell and CLI commands and in portal too.
+
+	- In the Azure VM the OS Disk is the temporary disk do not add permanent data to it will loose that.
+	- Create and attach a new disk
+
+	- Redeploy the VM using PowerShell:
+		- Set-AzureRmVM -Redeploy -ResourceGroupName "az_name" -Name "vm_name" 
+		- It will be redeployed to a different hardware cluster
+
+	- For adding the Network Interface Card stop the VM first.
+	- Recovery Servicw Vault is uswd to store the backup of the VM.
+	- For each VM we need a backup policy to restore.
+
+
+	- Azure App Services:
+		- Web app is azure service. It is abstraction above the hardware.
+		- App Service Web Apps lets you quickly build and scale enterprise-grade web, mobile, and API apps running on any platform.
+
+		- App Service Plan:
+			- where the different resources are constrained
+			- It gives you flexibility to allocate specific apps to a given set of resources and further optimize your azure resource utilization.
+
+		- Azure Compute Units(ACU) are dedicated computer resources used to run applications deployed in the App service plan.
+		- Scale out and Scale Up are used when demands needs with certain conditions(Cpu utilization)
+
+	- Azure Kubernetes Services:
+		- This new service features an azure-hosted control plane, automated upgrades, self healing, easy scaling and a simple experience for both developers and cluster operations.
+
+		- AKS Cluster:
+			- manages your hosted kubernetes environment, making it quick and easy to deploy and manage containerized applications without container orchestration expertise.
+
+
+	- Virtual Networks:
+		- Azure Virtual Network is the building block for your private network in Azure.
+		- Vnet enables many types of Azure resources such as Azure VM to securely communicate with each other.
+
+		- Route Table:
+			- A route table contains a set of rules, called routes, that specifies how packets should be routed in a virtual network.
+			- Route table are associated to subnets and each packet leaving a subnet is handled based on the associated route table.
+
+		- VPNs:
+			- Join an outside machine or network to an azure network
+			- end to end encryption of traffic
+			- Able to access systems by their private IP address
+
+			- ExpressRoute is a private connection to azure
+			- Work with a communication provide for setup.
+
+		- Firewall:
+			- a managed cloud-based network security service that protects your Azure Virtual Network.
+			- It is a fully stateful firewall as a service with built in high availability and unrestricted cloud scalability.
+
+		- Custom routes are used to override default Azure routing so that you can route traffic through network virtual appliance
+
+		- Peering: Add one virtual network to the another so resources in both networks can connect with each other.
+
+		- Azure VPN Gateway enables you to establish secure, cross-premises connectivity between your virtual network within Azure and on-premise IT infrastructure.
+
+	- Azure DNS:
+		- Azure Provided DNS:
+			- No Configuration required
+			- Can use hostnames to connect to machines on same Vnet
+			- A VM can refer to another VM on the same network just by its hostname without requiring a fully domain name.
+			- allows you to host your registered domains.
+
+		- Azure Private DNS:
+			- create your own custom domain names and have them recognized by your VMs
+			- only valid on your own virtual network
+			- Label.label format
+			- A Private DNS zone provides name resolution service within virtual networks.
+
+		- A DNS zone is used to host the DNS records for a particular domain. 
+		- The A recors maps a custom domain to an IP address
+
+
+		- A network security group can have a multiple network interfaces assigned to it.
+
+	- Load Balancing:
+		- divides the traffic to multiple resources
+		- Azure Load balancer is a layer 4 load balancer that distributes incoming traffic among healthy virtual machine instances.
+		- Five-tuple hash is the distribution traffic pass through the load balancer.
+
+	- Application Gateway:
+		- It provides an azure managed HTTP load balancing solution and onlayer-7 load balancing
+
+	- BackEnd pool:
+		- It is a collection of resources to which your application gateway can send traffic.
+		- A backend pool can contain virtual machines, virtual machine scale sets, IP addresses, domain names
+
+	- Network Watcher:
+		- It is a regional service that enables you to monitor and diagnose conditions at a network scenario level.
+		- Network Watcher IP flow verify checks if a packet is allowed or denied to or from a virtual machine based on a 5-tuple information.
+		- The security group decision and the name of the rule that denied the packet is returned.
+		- IP Flow Verify is used to diagnose the security group issues.
+		- Network Watcher variable packet capture allows you to create packet capture sessions to track traffic to and from a virtual machine.
+		- Packet capture helps to diagnose network anomalies both reactively and proactivity.
+		- Log Analytics is used to analyze traffic .
+
+	- With help of Azure Monitor we get more visibility into the health and performance of your virtual machine.
+	- Enabling additional monitoring capabilities provides insights into the performance and dependencies for your virtual machine.
+
+
+	Hands on Lab Exercise:
+	1. Manage Azure Active Directory Identities
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_01-Manage_Azure_AD_Identities.md
+
+	2.Manage Sunscription and RBAC
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_02a_Manage_Subscriptions_and_RBAC.md
+
+	3. Manage governance via Azure Policy
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_02b-Manage_Governance_via_Azure_Policy.md
+
+	4. Manage Azure Storage
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_07-Manage_Azure_Storage.md
+
+	5. Backup a virtual machine in Azure
+	Link: https://docs.microsoft.com/en-us/azure/virtual-machines/windows/tutorial-backup-vms
+
+	6. Manage Virtual Machine
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_08-Manage_Virtual_Machines.md
+
+	7. Manage Azure Resources by Azure Template
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_03b-Manage_Azure_Resources_by_Using_ARM_Templates.md
+
+	8. Backup Vitual machine
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_10-Implement_Data_Protection.md
+
+	9. Implement Web apps
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_09a-Implement_Web_Apps.md
+
+	10. Implement Azure Kubernetes Service
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_09c-Implement_Azure_Kubernetes_Service.md
+
+	11. Implement Azure Container Instance
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_09b-Implement_Azure_Container_Instances.md
+
+	12. Immplement Virtual Networking
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_04-Implement_Virtual_Networking.md
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_04-Implement_Virtual_Networking.md
+
+	13. Implement Intersite Connectivity
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_05-Implement_Intersite_Connectivity.md
+
+	14. Implement Traffic Management
+	Link: https://github.com/MicrosoftLearning/AZ-104-MicrosoftAzureAdministrator/blob/master/Instructions/Labs/LAB_06-Implement_Network_Traffic_Management.md
+
+	15. Monitor and Network Watcher
+	Link: https://azurecitadel.com/infra/vdc/lab4/
+
+	

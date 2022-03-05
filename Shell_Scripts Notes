@@ -1,0 +1,393 @@
+																		### Shell Scripting ###
+
+	-Shell:
+		- A program that interprets the commands you type in your terminal and passes them to the Operating System.
+		- Purpose is to make more convenient for you to issue commands to your computer.
+
+	- A shell script is a file 	containing commands for the shell.
+	- A Bash shell script is a file containing commands for the bash shell.
+
+	- Why Shell Scripts:
+		- Allows Automation
+		- Automate Daily Backups
+		- Monitor system periodically
+		- Automate Installation and Patching of software on multiple servers
+
+	- Run Shell Scripts:
+		- bash script.sh
+		- ./script( Here ./ means in the same directory)
+		- sh script.sh
+
+	- Run Script as a Command:
+		- use the script name only(script) because the command don't have the .sh extension.
+		- The command gives error, if it is not configured(Command not found)
+		- Whenever a command is executed the OS look into the path to find the executable file with referencd to the command.
+		### Error Sol:
+			- export the path where the script is written.
+				- eg: export PATH=$PATH:/home/user
+				- And than run the command
+			- which command-name: is used to find the location of the command
+		- Before executing a script give it permissions
+			- ls -l path: to see the permissions
+		- To make any script executable and to give permissions
+			- chmod +x /path_to_script
+
+	- Structure of Bash Script:
+		- begin:
+			- it tells the shell which interpreter is used to read file
+			  eg: #!/bin/bash(shebang line)
+			  - file command is used to tell the type of script
+			  	eg: file first_script
+
+		- middle:
+			- we have commands used here
+			  eg: echo "You are in Linux"
+
+		- end:
+			- in the end we have exit code(takes numeric argument whose range is in 0-255)
+			- for succcessful done we use exit code 0(0 : successful & 1-255 : unsuccessful)
+			- there is special meaning of different exit codes
+
+	- Security Permissions to script:
+		- ls -l script: gives the details about permission(10 chars)
+			- first char is either d(for directory) or -(for files or scripts)
+            - 3 groups for Owner, User Group and other users(rwxrwxrwx){read - 4, write - 2, execute - 1}
+            	- 744: gives all permission to owner only. All(read, write, execute)
+            	- 777: gives all permission to everyone
+            	- 770: gives permission to owner and group (use permission-calculator.org for more details)
+            	- 755: gives permission to other users also for read and execute
+
+    - Shell Expansions:
+    	- these are very powerful features that allow us to retrieve data, process command output and perform calculations
+
+    - Parameter: A parameter is an entity that store values
+    - 3 types of Parameters:
+    	- Variable
+    	- Positional Parameter
+    	- Special Parameter
+
+    	- Variable: stores the value
+    		- Syntax: name=value (no spaces are used around the equal to sign)
+    		- using /refrencing the variable: ${name}
+    		- two types:
+    			- user defined: defined by us while writing the script
+    			- shell variable: 
+    				- bash shell variable
+    				- bourne shell variable
+    				- we don't have to use curly braces for shell variables
+    				eg: HOME, PATH, HOSTTYPE
+    				- shell variable are in upper case
+
+    		- .bashrc file is used for ther color prompting.
+
+    - Parameter Expansion:
+    	- We can lowercase the first letter of the variable by ${name,}
+    	- For the entire variable in lowercase reference by ${name,,}
+    	- To UpperCase the first letter of the Variable use ${name^}
+    	- For the entire variable in upper case refrence by ${name^^}
+    	- To print length of variable use ${#name}
+    	- For substring in a variable Syntax: ${parameter:offset:length}
+    		- Note: for negative offset use some space after parameter colon eg: ${name: -3:2}
+    	
+
+    - Command Substitution:
+    	- usage: $(command) --> It will substitute the output of the command
+    	  eg: time = $(date +%H:%m:%S) --> Here time stores the output of date in the given format
+
+    - Arithmetic Expansion:
+    	- Syntax: $((expression))
+    	- use order of precedence when handling operators to get result
+
+    	- bc(basic calculator) command:
+    		- Syntax: echo "expression" | bc
+    		- we have to pipe the expression with bc
+    		- scale variable control no of decimal places.
+    		  eg: echo "scale=2; 5/2" | bc
+
+    - Tilde Expansion:
+    	- it helps when working in multiple directory
+    	- (~) symbol gives home directory
+    		eg: cd ~ : home
+    		    cd ~- : last directory value
+    		    ~+ : holds PWD value
+    	- ~amy : if amy is valid user gives its home directory
+
+    - Brace Expansion:
+    	- There are 2 types of braces expansion
+    		- String lists
+    		- Range lists
+    	- expand the curly braces.
+    	  eg: echo {1..10} : prints no from 1 to 10
+    	  	  echo {1..20..3} : prints no from 1 to 20 with step of 3(1 4 7 11)
+    	  	  echo month{1..12} : month is a prefix (month1, month2 .....)
+    	- touch command is used to make empty files 
+    	  eg: touch month{01..12}/day{01..30}.txt
+
+
+    - How Bash Processes Command line:
+    	- Step 1: Tokenisation: a sequence of characters that is considered as a single unit by the shell. 
+    			  Shell detemines tokens by looking at special characters(MetaCharacters):
+    			   |
+    			   & 
+    			   ;
+    			   ()
+    			   <>
+    			   space, tab and newline
+    			   	- Word: a token that does not contain an unquoted metacharacter
+    			   	- Operator: a token that contain atleast one unquoted character
+    			   		- Control Operator: control the command line(|,||,&,&&,;,;;)
+    			   		- Redirection Operators: redirection of the data stream(<,>,<<,>>,<&,>&)
+
+    			   - Quoting: Removal of special meanings
+    			     Three types of quoting:
+    			     	1. BackSlash(\): Removes special meaning from next character
+    			     	2. Single Quote: Removes special meaning from all characters inside
+    			     	3. Double Quoting: removes special meaning from all except dollar sign and backticks(`)
+
+    			     - Command: & - run the job in background
+
+    			     eg: echo $name > output.txt
+
+    	- Step 2: Command Identification
+    			  - Simple Commands:have simple name and no of arguments(eg: echo 1 2 3)
+    			  		- one word command
+    			  		- terminated by a control operator or newline
+    			  		eg: echo, tar
+
+    			  - Compound Commands:
+    			  		- provide programming constructs control flow statements
+    			  		- each compound command starts with a reserved word and is terminated by a corresponding reserved word
+    			  		- the pipe command run in it's own sub shell
+
+    	- Step 3: Expansions
+    				- 4 Stages of Expansions:
+    					1. Brace Expansion
+    					2. Parameter, Arithmetic, Command Substitution, Tilde Expansion
+    					3. Word Splitting
+    					4. Globbing
+    				   Note: Expansion are in the same stage are all given the same priority(left to right)
+
+    				   eg: echo $name{1..3}.txt and name=file
+    				   output= .txt, .txt, .txt
+
+    				    3. Word Splitting: split the result of some unquoted expansions into the seprate words(used unquotes result of stage 2 expansion only except Tilde)
+    				    	- The characters used to split words governed by IFS(internal Field Seprator)
+    				    		- space, tab , new line 
+    				    		- echo "${IFS@Q}"  -> '' \t \n
+    				    		eg:number = "1 2 3 4 5", touch $number -> it creates five new files(1,2,3,4,5)
+
+    				    		- We can change splitting operator in IFS(IFS=",")
+
+    				    4. Globbing: 
+    				    	- shortcut for listing files that command should operate, performed on words
+    				    	- Globbing patterns contain unquoted Special Pattern Characters: 
+    				    		* : zero or more occurence:
+    				    		? : exactly one occurence (fixed in length)
+    				    		?? : exactly 2 occurence
+    				    			eg: ls file??.txt (file11.txt)
+    				    		[] : matches the pattern defined in bracket (fixed in length, one occurence from the given series)
+
+
+    	- Step 4: Quote Removal
+    			  - During quote removal, shell removes all unquoted backslak,single and double quotes.
+    			  - process that bash uses to remove redundant quotes from final command
+
+    	- Step 5: Redirection
+    			  - Stream0 = stdin: provides input to the command
+    			  - Stream1 = stdout: contains main output of command
+    			  - Stream2 = stderr: contains error output
+    			  		- cd /root 2> err.txt): Redirect the error output to the err.txt
+    			  		- cd /root &> /dev/null: Redirect the standard error or standard o/p to dev/null file(&> - delete the previous data from the destination and add new one)
+
+
+    - Positional Parameters:
+    	- arguments passed to the script
+    	- referred in script as $1, $2, $3
+        - for parameter 10 and above we have to use curly braces ${10}
+        - to give default value to a positional parameter if not passed as a argument
+        	eg: ${parameter:-value}
+
+    - Special Parameters:
+    	- Parameters that bash gives  special meaning
+    	- Value of a special parameter is based on our current script
+    		- $# - tells about total no of positional parameters given
+    		- $0 - tells about type of current shell, current script
+    			   it tells about the usage message also
+    		- $@ - access all the positional parameter passed to the script, works on word splitting
+    		- "$@" - "$1" "$2" .. "$N"
+    		- $* : same as $@
+    		- "$*": $1,$2,$3 (IFS=,) -> provides positional parameters as one word
+
+
+    - Read Command:
+    	- read command is used to provide specific input
+    	- by default the input is saved in the REPLY variable(default)
+    	  eg: read input1 input2
+    	 		hello goodbye -> gives two input variable
+    	- with -p we can give the prompt
+    		 read -p "Input your name: " name
+    		 read -t 5 -p "Input your name: " name --> Here the read command wait for 5 secs and move to next command
+    	- read -s -t 5 -p : Here -s option will mask the input provided by the user(to hide passwords and all)
+
+
+    - Select Command:
+    	- the select command presents the user with a menu containing various option
+    	- the user can select their chosen option, hence the commands name
+    		 -eg  PS3=" "
+    		      select day in mon tue wed thur fri sat sun;(by default saved in RESPONSE)
+    		      do
+    		      echo "...."
+    		      break
+    		      done 
+
+    		    - for out of options select command take empty
+    		    - select command have default looping
+    		    - PS3 : have the prompt variable of select command
+    		    - PS1 : have the prompt variable of read command
+
+
+
+    - Chaining commands with list operators:
+    	- List: put one or more commands on a given line
+    	- List operators: types of control operators that enable us to create lists of commands that operate in different ways
+    		- & - sends the command in background untill it executes(echo 123 & echo 456) - Here 123 sends to background
+    		- ; - runs the commands sequentally (echo 123 ; echo 456)
+    		- && - the second command only runs if the first one was successful
+    		- || - the || operator makes it so that the second command only runs if thr first one failed
+
+
+    - Test Commands and Conditional Operators:
+    	- allow us to do some logical checks with our scripts 
+    	- A command that can be used in bash to compare different pieces of information
+    		- test commands result true - exit code 0 (eg: [2 -eq 2] ; echo $? :-> gives output 0 
+    		- test commands result false - exit code 1
+            - [[ -e today.txt]] -> checks file exists or not
+            - [[ -f ]] -> checks if something is a regular file(pdf) 
+            - [[ -x ]] -> file exist and have executable permissions
+            - -r -> file is readable
+            - -w -> file is writeable
+            - -nt -> check if newer file exist
+            - -d -> checks if a file exists and it's directory
+            - -f -> checks file exits or not
+
+
+    - Control Statements:
+    	- If statement:
+    		- condition true than exit code status 0
+    		- condition false than exit code status 1
+
+    		Syntax: if [[condition]]; then
+    						body
+    				fi
+
+    	- Case Statements:
+    		- create specific cases and write commands 
+    		- create default cases if none of other cases match
+    		- reserved words case and esac
+
+    		eg: case "$number" in 
+    					[0-9]) echo ".....";;-> clause ends
+    					[0-9][0-9]) echo "...";;
+    					*) echo "..." --> default case
+    			esac
+
+    	- While Loops:
+    		- while [condition]; do
+    			body
+    		  done
+
+    	- Handling command line options:
+    		- getsopts: gets the option provided by the command line
+    		- getopts "f:c:" opt;
+    		  - when the user type value for either f or c it stores $OPTARG
+    		- use getopts in while
+    		- in getopts use an (?) for invalid options
+
+    	- read-while loops:
+    		- these are while loops that use the read command at their test command
+    		- we use process substitution in while loops when reading from file < <(ls $HOME)
+
+    	- Indexed Array:
+			- simple parameter expansion on array gives only the first parameter
+			- ${arrayname[@]} - gives full array
+			- ${array:offset:length}
+			  eg: numbers={1 2 3 4}
+			  	  echo ${numbers[@]:1} -> 2 3 4
+			  	  echo ${number[@]:1:2} -> 2 3 
+			- Add element: numbers+=(5)
+			- Remove element: unset numbers[2]
+			- indexes: ${!numbers[@]}
+			- Replace element: nummbers[index]=value
+
+		- ReadArray:
+			- it converts whatever it reads on its standard input stream into an array
+			- readarray array < filename
+			- readarray -t arr < file :-> it removes the sneaky action($', \t, \n)
+			- process substitution is used with readarray to create the array when the o/p of a command used as input
+			  eg: readarray -t files < <(ls ~/bashcourse/array)
+
+		- For loops:
+			- iterate over all elements and perform some commands
+			- for var in list_of_var_sepby_,/arrayname wrapped in "" ; do
+				body
+			  done
+
+	- Debugging:
+		- ShellCheck 
+			- makes recommendations on your script
+
+	- Three commands for getting information:
+		- the man command(man used for distributing documentationn for commands)
+		- the help command(eg: help cd)
+		- the info command(tells more detailed information)
+
+		- Internal commands that are built into the bash shell
+		- external are external to bash
+			type -a cd : tell whether internal or external
+
+	- Scheduling Automation:
+		- At commond:
+			- it's a deamon background service
+			- write at and time in terminal to start at command
+			- at -l: to list scheduled jobs
+			- remove the job from scheduled list use : at -r jid/pid
+			- for script file use -f option with at
+			- at 9am tomorrow -f scriptname
+			- at now + 5 mins - schedules the job 5 mins from now
+
+		- Cron command:
+			- in the cron editor we schedule the job in the given format(crontab -e	)
+			- m h dom mon dow command
+				m-minute(* for every minute, otherwise specify the value for particular min)
+				h-hour(* for every hour)
+				dom-day of month
+				mon-month number
+				
+				dow-day of week
+				command path or script path
+
+		** Scheduled jobs won't work when at the scheduled time the system is power off.
+
+		- Cron directories;
+			- folders on your system where ou can plac scripts to run at a particular frequency
+			- ls /etc | grep cron
+			- Remove the extension when any file placed in cron directory
+			- These are regular directories but we will give them run parts command a specific time to execute.
+
+		- Anacron:
+			- it recover the missed job.
+			- And run the missed job when the system is booted.
+			- days(period) delay_in_min job_identifer command/script
+				1    5           cron.daily    file     -> Here the scripts run daily and the there is delay of 5 mins when scripts run
+				7    10          cron.weekly   file     -> The script run every day of week with delay of 10 min
+			 @monthly 15         crom.monthly   file 
+			- The log timestamps stored in /var/spool/anacron when jobs run
+
+	 -Ping command:
+	 	- it is used to check the internet connection
+	 	  eg: ping -c 1 google.com &> /dev/null
+	 	  		- Checks the internet by pinging to google here -c used for how many times run the ping test
+
+
+
+

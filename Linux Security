@@ -1,0 +1,381 @@
+																### Linux Security ###
+
+	~ Types of Security Breach:
+		- Data:
+			- Steal, Corrupt, Remove
+		- Application
+			- Apacher server, DB, Fin apps.
+		- Operating System
+			- Filesystem corruption, System failure, Process management
+		- Hardware
+			- Attack on CPU, memory
+
+	~ etc/passwd: 
+		- user configuration file
+		- All configuration files in etc are customizable and editable.
+		- Syntax: root:x:0:0:root:/root:/bin/bash
+				  username:password:userid:groupid:user info:home dir:shell
+		  ~ egrep -v "bash|nologin"  --> It will exclude no login and bash from the command.
+
+	~ etc/group:
+		- File that has information about groups
+		- Syntax: GroupName:GroupPassword:GroupID:GroupList
+				  users: : 20:root.gama
+
+
+	~ etc/shadow:
+		- Stores actual password in the encrypted format for user's account with additional properties related to user password
+		- Syntax: Username:Password:last pass change(date):minimum:maximum:Warn:Inactive:Expire
+
+	~ etc/login.defs:
+		- The chage command per user
+		- Syntax: chage [-m mindays] [-d lastday] [-I inactive] [-E expiredate] [-W warndays] user
+		- So if a new user is created the default values are given:
+			-PASS_MAX_DAYS 99999
+			-PASS_MIN_DAYS 0
+			-PASS_MIN_LEN 5
+			-PASS_WARN_AGE 7
+
+	~ Commands used for user creation:
+		- useradd
+		- passwd
+		- userdel
+		- groupadd
+		- groupdel
+		- usermod
+
+	~ Set Password Policy:
+		- /etc/login.defs
+		- /etc/pam.d/system-auth
+		- /etc/security/pwquality.conf
+
+	~ Lock or Disable user accounts:
+		- /etc/defaults/useradd
+
+		- If a user is locked than in the etc/shadow file there is an excalmatory sign in front of pass.
+
+		- Command to check user status:
+			- lastlog -b 90  -> list users who have not logged in from last 90 days
+			- lastlog -b 90 | grep -v 'Never log'
+
+		- To disable user account:
+			- usermod -L username
+			- passwd -1 username
+			- Change user shell to /bin/nologin in /etc/passwd
+
+		- To renable user account:
+			- usermod -U username
+			- passwd  -u username
+
+    ~ Lock user account after 3 failed attempts:
+    	- Being root and copy the files /etc/pam.d/password-auth & system-auth to /tmp
+    	- Edit these files one by one
+    	- Add the line as first line : auth required pam_tally2.so deny=3 onerr=fail unlock_time=600
+    	- Add this line to the account section: account required pam_tally2.so
+    	- Failed attempts to see: pam_tally2 --user=USERNAME
+    	- To unlock the acc: pam_tally2 -r -u username
+
+    ~ Restrict root login:
+    	- Become root and copy /etc/ssh/sshd_config file to /tmp.
+    	- Edit the sshd_config file
+    	- Replace:
+    		#PermitRootLogin yes --> PermitRootLogin no
+    	- Restart the ssh service. systemctl restart sshd
+
+    ~ Disable SSH Access to a specific user:
+    	- Become root and copy /etc/ssh/sshd_config file to /tmp.
+    	- Edit the sshd_config file
+    	- If the line does not exist add in the last line 
+    		- DenyUsers USERNAME
+    	- Restart the ssh service.
+
+    - Limiting User Account Resources:
+    	- with ulimit command we can restrict
+    	- Two types:
+    		- Hard limit: Hard limit can not overwrite by regular user
+    		- Soft limit: overwrite by the regular user
+    	- ulimit -a : to get know which elements have limits
+    	- The system resiurces limitation are defined in /etc/security/limits.conf
+
+    ~ To change configuration of sudo edit the /etc/sudoer file
+    ~ To allow a user to run any root privileged command then add to wheel group
+    	usermod -aG wheel iafzal
+    ~ To remove a user from a group
+    	gpasswd -d user group
+
+
+    ~ Monitor User Activity:
+    	- Logging
+    	- Auditing
+
+    	- Default logging by OS:
+    		/var/log/messages   ->  All system related messages
+    		/var/log/secure     ->  User login activity including failures
+    		last                ->  View history of all logged users
+    		last <username>
+    		last b              ->  bad login attempts
+    		/etc/rsyslog.conf   ->  Logging configurations
+    		tcpdump 			-> Incoming and outgoing network info
+
+
+    ~ PAM(Pluggable Authentication Module):
+    	- provides dynamic authentication support that sits b/w Linux applications and Linux native authentication System.
+    	- Main purpose to allow System Administartors to integrate services or programs with different authentication mechanism without changing the code.
+
+    	- Configuration of PAM can done in 2 ways:
+    		- /etc/pam.conf -> it will ignored by linux if pam.d presents
+    		- /etc/pam.d  -> better for each individual services
+
+    	- PAM Configuration file format:
+    		- have three columns.
+    		- first : management groups
+    		- second : control flags
+    		- third : module(SO file) used.
+
+    		~ First Column - Module Interface or Type:
+    			- PAM seprates task of authentication into 4 management groups:
+    				-> Authentication: verify user's identity. eg: Username/Password
+    				-> Account: check that the specified account is valid.Expiration date, time of day and user has access to requested service
+    				-> Password: responsible for updating password and work with authentication.
+    				-> Session: manage actions performed at the beginning or end of the section.
+
+    		~ Second Column - Control Flag:
+    			- We have 4 control flags in services files
+    				-> Requisite: If a module interface is flagged as requisite and fails, PAM will return to calling application.
+    				-> Required: When all the modules have been executed, one or more have been failed. PAM will return failure to calling application.
+    				-> Sufficent: If a sufficent modules returns ok, the processing of modules will be stopped.
+    				-> Optional: In case of failure, the stack of modules continues execution and return code is ignored.
+
+    				There are two other valid control flags:
+    				 - include: includes all lines from the configuration file specified as an argument to control.
+    				 - substack
+
+    		~ Third Column - Dynamically loaded modules(SO Files):
+    			- PAM loaded object files are usually located in lib/security or lib64/security
+    			- A module can provide mechanisms to authenticate users from any backend file a like /etc/passwd
+    			- The main module in any distribution is pam_unix.so which verifies authentication
+
+
+    		~ To check a program is PAM-aware:
+    			- ldd /usr/bin/sshd | grep pam
+    			- ldd /bin/su | grep pam
+
+    - Securing Linux FileSystem:
+    	- File Types: 
+    		- c: special or device files -> these files are used to communicate with hardware devices
+    		- s: socket files -> /dev/log - used by processes to communicate 
+    		- p: Named Pipe: -> allows communication b/w two local processes
+    		- b: Block device -> similar to character file, mostly govern hardware as hard drives, memory etc
+
+    	- Linux File attributes:
+    		- Total 9 columns
+    		- The second column is the number of hard link to the file .
+    			- For a directory the no of hard link is the no of immediate sub directories plus itself and it's parent's directory.
+
+    ~ Through ACL we can give the read and write access to the user who is not the part of group created by the owner.
+    	- setfacl and getfacl are used to assign and remove ACL permissions
+
+
+    ~ Securing Linux System:
+    	- MOTD(Message of the Day):
+    		- The System administrator setup the MOTD which will alerts users to be careful your activity is being monitored.
+    		- The text message can be added in /etc/motd
+    	    - Steps for the customize Message of the Day:
+    	    	-> Create a new file in /etc/profile.d/motd.sh
+    	    	-> Add desired command in the motd.sh file.
+    	    	-> Modify the /etc/ssh/sshd_config file to edit #PrintMotd yes to PrintMotd no.
+    	    	-> Restart the sshd service(systemctl restart sshd.service)
+
+    ~ Commands to find out which services are running:
+    	- netstat -l
+    	- netstat -tulpn
+    	- systemctl 
+    	- chkconfig -list - for cent os
+    	- service --status-all 
+
+    ~ A disk in linux should be partition into following mounts:
+    	- /
+    	- /boot
+    	- /usr
+    	- /tmp
+    	- /var
+    	- /opt
+
+    	-> Partition helps in keep your data safe from malware attacks.
+
+    ~ Disable Alt+Ctrl+Delete :
+    	- check the status of ACD command:
+    		- systemctl status ctrl-alt-del.target
+    	- To disbale
+    	    - systemctl disable ctrl-alt-del.target
+    	    - systemctl mask ctrl-alt-del.target -> create a symbolic link to /dev/null
+
+    	- In older version of centos/RHEL6 there is a file that handles it /etc/init/control-alt-delete.conf
+
+    ~ One service per system because if there are more services than there are more no of ports opened and there will be more no of doors opened for the attackers.
+
+
+    ~ Disable USB-Stick detection:
+    	- create a file /etc/modprobe.d/no-usb
+    		- add the line -> install usb-storage /bin/true
+
+    ~ Enable NTP(Network Time Protocol):
+    	- It is a software algorithm that keeps computers and applications synchronized.
+    	- It keeps the devices synchronized with the time elapse of few milliseconds.
+
+    	- NTP and chronyd both function in same way.
+
+    	Benefits: Acurate time information across all devices and applications
+
+   		- Configuration File:
+   			- /etc/ntp.conf
+   			- /etc/chronyd.conf
+
+   		- Command Syntax:
+   			- systemctl restart ntpd
+   			- systemctl restart chronyd
+
+   			- Status: 
+   				- systemctl status ntpd/chronyd
+   				- chronyd sources
+   				- ntpq -> peers
+
+   		- Logs: 
+   			- /var/log/messages
+
+
+   	~ Securing Linux Security Network:
+   		- There are two tools to manage firewall:	
+   			- iptables
+   			- firewalld
+
+	   		- Check iptables package is there or not
+	   		- Start the service 
+	   			-> systemctl start iptables
+	   			-> systemctl enable iptables
+	   		- To check iptables rule -> iptables -L
+	   		- To flush iptable -> iptables -F
+
+	   		- The iptables do packet filtering and it is organized in three different structures:
+	   			-> tables: 4 types of tables filter, mangle, nat, row
+	   			-> chains: the chains are attached to table
+	   				- INPUT: incoming traffic
+	   				- FORWARD: going to router from one device to another
+	   				- OUTPUT: outgoing traffic
+	   			-> targets: it decides the fate of packet accept, reject
+	   				- ACCEPT, REJECT, DROP 
+
+	   		- List all rules in a table by IP number:
+	   			- iptables -L --line-number
+
+	   		- To delete a rule we use the line number:
+	   			- iptables -D INPUT num
+
+	   		- To block a specific protocol with rejection
+	   			- iptables -A INPUT -p icmp -j REJECT
+
+	   		- To block a specific port(HTTP i.e 80)
+	   			- iptables -A INPUT -p tcp --dport 80 -j DROP
+
+	   		- Block connection to a network interface
+	   			- iptables -A INPUT -i enps03 -s ipaddr -j DROP
+
+	   		~ Find ip address of a website: host -t a www.facebook.com
+
+	   		- To save ip tables iptables-save
+	   			the file is saved in /etc/sysconfig/iptables
+
+	   		- iptables -A : Append the rule to last
+	   		- ipatbles -I : filters the rule to the top
+
+
+	   	~ Firewall(firewalld):
+	   		- it has it's own command
+	   			- firewall-cmd
+
+	   		- It has free pre-defined services rule that are easy to turn on or off
+	   			- services such as: NFS, NTP, HTTPD
+
+
+	   		- Firewalld has the following:
+	   			- Table
+	   			- Chains
+	   			- Rules
+	   			- Targets
+
+	   			- iptables is stopped when use firewall or stop firewall when use iptables
+	   				systemctl stop iptables
+	   				systemctl disable iptables
+	   				systemctl mask iptables
+
+	   			- The location of all pre-defined services
+	   				- /usr/lib/firewalld/services
+
+	   			- Start firewalld
+	   				systemctl start/enable firewalld
+
+	   			- Check rule of firewalld
+	   				firewall-cmd --list-all
+
+	   			- Get list of all services firewalld aware of 
+	   				firewall-cmd --get-services
+
+	   			- The firewall has multiple zone, to get list of all zones
+	   				firewall-cmd --get-zones
+	   				- for active zones use: --get-active-zones
+
+	   			- To get firewall rules for public zone
+	   				- firewall-cmd --zone=public --list-all
+
+	   			- To add a service 
+	   				- forewall-cmd --add-service=http (use --permanent in last for permanently)
+
+	   			- To remove a service
+	   				- firewall-cmd --remove-service=http
+
+	   			- To add a service that is not pre-defined by firewalld
+	   				- Navigate to /usr/lib/firewalld/services/allservices
+
+	   			- To add a port
+	   				- firewall-cmd --add-port=1110/tcp
+
+	   			- To remove a port
+	   				- firewall-cmd --remove-port=1110/tcp
+
+	   			- To reject incoming traffic from a IP
+	   				- firewall-cmd --add-rich-rule='rule family="ipv4" source address="ipaddr" reject'
+
+	   			- To block and unblock ICMP incoming traffic
+	   				- firewall-cmd --add-icmp-block-inversion
+	   				- firewall-cmd --remove-icmp-block-inversion
+
+
+
+	   	- To turn off IPv6:
+	   		- Become root and open vi /etc/default/grub
+	   		- Go to the following command line and add the following
+	   			GRUB_CMDLINE_LINUX="ipv6.disable=1 crashkernel=auto ...
+	   		- Save the file
+	   		- Update the grub configuration
+	   			grub2-mkconfig -o /boot/grub2/grub.cfg
+	   		- Reboot the server.
+
+
+	   	- Sed Command:
+	   		- Replace a string in a file with new string
+	   			- sed 's/word/new_word/g' path_to_file/filename {g for global replace}
+	   			- to insert the changes into a file
+	   				sed -i 's/word/new_word' path
+	   		- Find and delete a line
+	   			- sed '/word/d' path_to_file
+	   		- Remove empty line
+	   			- sed '/^$/d' path_to_file (use -i option to insert)
+	   		- Remove the first or n lines in a file
+	   			- sed '1d' file_name/path 
+	   			- sed -i '1,nd' filename
+	   		- To replace tab with spaces
+	   			- sed -i 's/\t/ /g' file
+	   		- Show defined lines from a file
+	   			- sed -n 12,18p file
+	   			- sed 12,18d file - displays 1 to 12 lines
+

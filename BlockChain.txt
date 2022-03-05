@@ -1,0 +1,44 @@
+																### Blockchain Basics ###
+	
+	##Blockchain: In simple terms blokchain is chain of blocks(in these blocks) we have data so it's like a Database as we have other DBs like SQl, NoSQL.
+		- In blockchain we have peer to peer network/nodes-nodes network so every node have copy of the data.
+		- If any new data is inserted so the data sync with all nodes and it will be in all nodes.
+		- The data inside the blocks/nodes is immutable becz it has 3 things:
+			- Data
+			- Hash
+			- Previous Hash
+		  - So if we change the data in any block than we change the hash of the current block so than we have to change the previous hash value in the next
+		    block  and if we change the data in next block than we have to change the previous hash in next block so this process will continue.
+		- we don't need centralized servers for anything.
+		- Through Blockchain we can make decentralised applications(Dapps) that don't require any third party to be involved.
+				
+	##Three Fields:
+	- Blockchain Advisor --> 
+	- Blockchain Developer --> Develop applications on blockchain
+		- Blockchain Core Developer -> it helps in making a blockchain client, the core developers are working on these clients models, Proof of work, Protocols,
+		  works according to the requirement of these clients.	
+		- Blockchain Application Developer --> Use the existing blockchain and made application on it, and the blockchain in all the nodes so all the nodes
+		  have access to it so they are called Decentralised Applications.
+	- Blockchain Expert --> Architect
+	
+	## Pre-requirement:
+	- Cryptography
+	- Distributed Computing
+	- Node JS
+	- Web Development
+	
+	## Tools Required:
+	  - Solidity - Programming language used to make smart contract and these smart contracts are deployed on blockchain network.
+	  - Ganache - In this tool you can test your smart contract which provides Etherium Virtual Machine(EVM) and we can test it here.After testing we can deploy
+	    on Etherium Main Net.
+	  - Truffle - To host a Smart contract on a block chain we have to build it first and here truffle came and after deployments we do the testing.
+	  - Front end- After deploying of smart contract we needs a front end user that can communicate with our smart contract.
+	  - Web3JS - The front end directly can not communicate with the blockchain network so here we need a library that helps our front end user to communicate 
+	    with the blockchain backend network.
+	  - MetaMask: So the end user can't connect to front end directly, because the browsers directly not support blockchain transactions so here comes an gateway
+	    or wallet by which the user can do the etherium transactions by logging with their credentials
+	
+	## Usecases:
+	 - Web 3.0
+	 - NFT
+	 - Metaverse

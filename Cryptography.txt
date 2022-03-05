@@ -1,0 +1,59 @@
+														Security and Cryptography
+
+  	- 	    Alice                               Bob
+   	      (Sender)			                (Reciever)
+   (Message,key)  -------Encrypted------>(Message) -------Decrypted------> (Message,key)
+    - Ceaser Cipher:
+		- In ceaser cipher the plain text is converted into the encrypyted with help of key.
+		- The size of key is 3.
+		- The characters are replaced by a difference of 3.
+		- eg: YOU  ------Encrypted-------> BRX -------Decrypted------> You
+		
+		- Algo of ceaser cipher is mapping.
+		
+		Weakness:
+			- There are only 26 keys here.
+			- If they know the algo, they can break the text.
+		
+		- The security of ceaser cipher depends on keeping the algorithm secret.
+			
+	- Kerckhoff's Principle:
+		- The attackers should not be able to break the ciphers even if they know the algroithm or cipher.
+		
+		
+	- Substitution Cipher:
+		- A substitution cipher is a ceaser cipher with more no of keys.
+		- Asubstitution cipher have 26! permutations.
+		- pow(2,88) less than 26! so we have a security of 88 bits
+		
+	- XOR operation:
+		- is used for encrypting and decrypting
+		- message ^ random = cipher
+		- cipher ^ random = message
+		- Here random is the key which helps in decryption and encryption.
+		
+		- If we take plain text of same length and than we guess the key by xor with cipher and again xor the key with cipher we get any plain text.
+		
+		4 - 0100
+		8 - 1000
+		
+	- Stream Ciphers: In stream cipher a stream of bits passed as key.
+		- A stream cipher is like a OneTimePad
+		- No requirements on key stream
+		- Hence, not true randomness
+		- Also, can resuse key stream
+		
+		- We use LCG(Linear Constrained Generator) because it generates the same pseudo random integers
+		
+		- Challenges:
+			- Autenticity - MAC
+			- Reuse key
+			- Low entropy
+			
+		- We can modify the encrypted text by changing the bits of encrypted text.
+		
+	
+	- Block Cipher:
+		- Instead of key stream blocks are used 
+		- For DES block size is 8 bytes
+		- If the block size is not of 8 bytes than we have to pad it with zero  -> Padding

@@ -1,0 +1,328 @@
+																		### Linux ###
+
+	~ File System Paths:
+	 	- Absolute : it begins with "/" and indicates path start at the root directory.
+	 	- Relative : it not begins with "/" and identifies a locn relative to current location
+
+	- Directory listing Attributes:
+		- drwxr_xr_x : 10 charcters(d - directory, l-link, - : file)
+
+	 - Error redirects:
+	 	- ls -l /root 2> errorfile (The 2> redirect the error to the errorfile)
+
+	 - Linux file types:
+	 	- There are 7 types of file in linux:
+	 		- : Regular file
+	 		d : directory
+	 		l : link
+	 		c : special or device file
+	 		s : socket
+	 		p : Named pipe
+	 		b : block device
+
+	 - find and locate command: 
+	 		find . -name "filename" (Here . means search from current directory)
+	 		locate filename
+
+	 		find: it iterates over a file system to locate the files
+	 		locate: it uses a prebuilt database which is regularly updated
+	 		Note: To use locate update the db by the root user(updatedb)
+
+	 - Change Password:
+	 	- passwd userid
+
+	 - WildCards:
+	 	* - represents zero or more character
+	 	? - represent a single character
+	 	[] - represent a range of character
+
+	 - Soft and Hard links:
+	 	inode: pointer or number of file on the hard disk
+	 	soft link: link will be removed if the files removed or renamed(ln -s)
+	 	hard link: deleting, renaming or removing file will not affect the hard link(ln )
+
+	 	ls -ltri : it gives the link with no of inodes
+
+	 - Recursive ownership change option(Cascade):
+	 	~ -R : if we use chown or chgrp with -R option it will not change only that directory but all the files and directories in that directory.
+	 	~ chgrp : to change group
+
+	 - Access Control List(ACL):
+	 	- provides an additional more flexible permission mechanism for file system.
+	 	- it allows you to give permission for any user or group to any disc resource.
+
+	 	commands to assign and remove ACL permissions:
+	 		- setfacl
+	 		- getfacl
+
+	 	1. Set permission to user:
+	 		setfacl -m u:user:rwx /path/to/file
+
+	 	2. To add permission for a group.
+	 		setfacl -m g:group:rw /path/to/file
+
+	 	3. To remove a specific entry.
+	 		setfacl -x u:user /path/to/file
+
+	 	4. To remove all entries.
+	 		setfacl -b path/to/file
+
+
+	- Help Commands:
+		- There are 3 types of help commands:
+			~ whatis command
+			~ command --help
+			~ man command
+
+	- tee Command:
+		- standard o/p to a file
+		- used to store and view the o/p of any command
+		- used with pipe command(echo "o/p" | tee filename)
+		- If we want to append something to that file(echo "o/p" | tee -a filename)
+
+	- Pipe(|) Command:
+		- it connects the o/p of one command directly to the input of another command
+		- the Pipe command run in the sub shell and it will executes firstly
+		- rm -Rf : it will forcefully remove sub-directories and it's contents as well
+
+	- File display command:
+		- cat
+		- more
+		- less
+		- head
+		- tail
+
+	- Compress and uncompress file:
+		- tar: used to compress the file( tar cvf backup.tar .)
+		- gzip:
+		- gzip -d:
+
+			- These commands helps in the transfer of data b/w remote system becz by zipping the file size is reduced.
+
+	- Truncate file size:
+		- used to shrink or extend the size of a file to the specified size
+		- truncate -s 10 filename
+
+
+	- Combining and splitting files:
+		- split command is used to split files
+		  split -l 300 file.txt childfile.txt
+		- multiple files combined to one by using redirection operator
+
+
+	- User Account Management:
+		- useradd
+		- groupadd
+		- userdel
+		- groupdel
+		- usermod
+
+	- Switch users:
+		- su -username
+		- sudo
+		- visudo : configuration file wehere we change configurations for the different users
+		- fdisk : gives the details about disks
+
+	- Monitor users:
+		- who, last, w, finger, id
+
+	- Talking to users:
+		- wall: it is used to broadcast message to all other users.
+			- type wall in your terminal and than enter and write the message you want to broadcast.	
+
+		- write: If we want to give a message to the particular user than write.
+			- write username and enter than type the broadcast the message
+
+	-which: it tells where the command is located
+	- cal: it is calendar command gives information about calender(cal month(0..12) year)
+
+	- Process/ Services Command:
+		~ systemctl or service
+		~ ps 
+		~ top
+
+	~ Process Management:
+		~ background: (bg) put the job in the background
+		~ foreground: (fg) gets back the process in the foreground
+		~ Run process even after exit: nohup proccess &
+		~ nice: this command is used to give priority to any process
+
+	~ System Monitoring Commands:
+		~ top, df, dmesg, iostat, netstat, free, cat /proc/cpuinfo, cat /proc/memoinfo
+		~ df -h: memory info
+		~ df -sh * : it also gives memory info for each file in a directory
+
+	~ Log Monitoring:
+		- log directory: /var/log
+
+
+	- ethtool - find details about NIC interface
+	- nmcli - used for network manager command line interface
+	- nmtui - used for network manager text user interface
+	- nm-connections-editor - provide access to most of network management configuration 
+	- GNOME Settings: the network settings of GNOME 
+
+
+	~ Remote Synchronization:
+		- use ssh utility for sending the files
+		  rsync options source destination
+		  eg: rsync -azvh /home/dir /destunation_dir
+
+	~ System Update and Repos:
+		apt-get : for update and upgrade
+		rpm: after download when we want to install use rpm or used when no internet connection
+
+	~ update: preserves old packages
+	~ upgrade: delete old packages
+
+	~ Commands used for DNS lookup:
+		- nslookup
+		- dig
+
+	~ To display image through command line:
+		- first install imageMagick package
+		- display image_file
+
+	~ Configure Idle timeout in ssh
+		- for that edit the sshd-config file 
+
+	~ Access remote server without password
+		- generate the key(ssh-keygen)
+		- copy the key to the server(ssh-copy-id root@ip)
+		- now while loggin from client you don't need passwd
+
+	~ System Run Level:
+		- We use system run level with init command(init no)
+		- There are total 6 system run level in linux
+		- Main Run level:
+			- 0 : Shut down or halt the system
+			- 1 : single user mode  
+			- 6 : Reboot the system
+		- Other Run level:
+			- 2 : Multiuser mode without networking
+			- 3 : Multiuser mode with networking
+			- 5 : Multiuser mode with networking and GUI
+
+	~ Linux Boot Process:
+		BIOS --> it executes Master Boot Record
+		MBR --> it executes GRUB
+		GRUB --> the GRUB executes the kernel
+		kernel --> the kernel executes sbin/init
+		Init --> it executes the run level programs
+		Runlevel --> run level programs executed from /etc/rc.d/rc*.d/
+
+		who -r : it tells in which run level we are
+
+	~ Disk Partition:
+		~ df -h
+		~ fdisk -l 
+
+	~ Adding a new disk Partition:
+		~ fdisk new_partiton_name
+		~ type m to get all options
+		~ type n for partition type
+		~ type p for primary partition
+		~ then type enter by seeing the o/p
+		~ type w to write table to disk and exit
+
+	~ Assign file system type:
+		~ mkfs.xfs /dev/sdb1
+
+	~ Mount the created partition
+		~ mount partiton_name dir_where_to partition
+
+	~ To unmount
+		~ umount dir_where_mounted
+
+    ~ LVM(Logical Volume Management):
+    	- allows disks to combine together
+
+    	~ Mount point to be selected if configuring LVM:
+    		- /home
+    		- /var
+    		- /boot
+    		- /swap
+    		- / - in last select this one and give all left memory
+
+    ~ Swap space:
+    	- Recommended Swap size = Twice the size of RAM
+    	Commands to make swap:
+    	 - dd
+    	 - mkswap
+    	 - swapon or swapoff
+
+    ~ RAID(Redundant Array of Independent Disks):
+    	- Types of RAID:
+    		- RAID0:
+    			- Here we add up the disks to increase size and the read write operation
+    			- But in case of disk failure we loose data
+    		- RAID1:
+    			- Here we mirror the first disk with the second one
+    			- But the read/write operation are slow
+    			- We have data in case of disk failure
+    		- RAID5
+    			- Here we add the disk and do the mirroring also
+    			- We have more memory and read/write operation
+    			- it solves the problem of both the cases
+
+    ~ Linux fsck utility is used to check and repair linux file systems(ext2, ext3, ext4)
+    ~ Linux xfs_repair utility is used to check and repair linux file system for xfs file system type
+
+    Thr possible exit code for fsck:
+    	- 0 : No errors 
+    	- 1 : Filesystem errors corrected
+    	- 2 : System should be rebooted
+    	- 4 : FileSystem error left uncorrected
+    	- 8 : Operational error
+    	- 16 : Usage or syntax error
+    	- 32 : fsck cancelled by user request
+    	- 128 : Shared library error
+
+    	-df -T : it tells the type of file system
+
+    	- for xfs_repair we have to unmout the partition if it's mounted
+
+    ~ To backup or clone an entire hard disk
+      dd  if=<source file name> of=<target file name> [options]
+
+    ~ To backup copy disk partition
+      dd if=partition_name of=partition.img
+
+   ~ Change file creation Permission:
+   	 - umask : command to set default permission of any newly created file/directory
+   	   syntax: umask u+rw,g+r,o-rwx
+
+   ~ If the file system is corrupted than it would be corrupted in one of the file system.
+
+   ~ Troubleshooting steps for Slow Performance:
+   		- Disk Space issues: df -h, du -sh *
+   		- Processing: top, free, lsmem, /proc/meminfo, vmstat, pmap <PID>, dmidecode, lscpu
+   		- Disk Issues: iostat -y 5, lsof
+   		- Networking: tcpdump -i enps03, lsof -i -P -n | grep -i listen, netstat -plnt or ss -plnt, iftop
+   		- Other tools: htop, iotop, iptraf, psacct
+
+
+   ~ SELinux:
+   		- It is a linux kernel security module that provides a mechanism for supporting access control policies
+   		- SELinux options:
+   				- Enforcing: Enabled 
+   				- Permissive: Disabled but logs the activity
+   				- Disable: Disable and not activity the logs
+
+   		- Check SELinux status:
+   				- sestatus or getenforce
+   				
+   		- SELinux setting:
+   				- setenforce 0 = Permissive/Disable
+   				- setenforce 1 = Enable
+
+   		- Modify SELinux config file for permanent change: 
+   				- /etc/selinux/config
+   					SELINUX=enforcing
+   					SELINUX=disabled
+
+   		- Two main concepts of SELinux:
+   				- Labeling 						--> User:role:type:level
+   				- Type enforcement
+
+   				- to list label of a directory: ls -dZ /usr/sbin/httpd (for file instead of d put l)

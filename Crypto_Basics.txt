@@ -1,0 +1,281 @@
+																				  Cryptography
+																				  
+    - Cryptography is developing and analyzing of protocols which prevents mallicious third parties from retrieving information being shared b/w two entities.
+	
+	- Encryption: When the plain text is converted into a non-readable format with the help of key(k)
+	            - The unreadable format text is called cipher text.
+				
+	- Decryption: When the cipher text is converted back to plain text with help of key(k)
+	
+	- The key used for encryption and decryption is same.
+	
+	- Features:
+		- Confidentiality
+		- Integrity
+		- Non-Repudation
+		- Authentication
+		
+	- Types of Cryptography:
+		- Symmetric key Cryptography:
+			- Use common key at encryption end and decryption end.
+			- Faster and simpler.
+			- The sender and reciver have to exchange key in a secure manner.
+		- Hash Functions:
+			- A hash value with fixed length is calculated as per plain text
+		- Asymmetric key Cryptography:
+			- A pair of keys is used for encryption and decryption.
+			- Public key is used for encryption and Private key is used for decryption.
+	
+	- Playfair Cipher:
+		- Algorithm:
+			- The playfair cipher generate a key square(5x5)
+			- Note: Alphabet J is omitted, replaced with alphabet I in key matrix.
+			- The initial alphabet in the key are the unique alphabet of key in the order and than the remaining alphabets in order.
+			- The plaintext is split into pairs of two letters, if there is an odd numbers of letters, a Z is added to the last letter.
+			- Pair can't be made with same letter. Break the letter in single and add a bogus letter(x to z) to the previous letter.
+			
+			Rules for Encryption:
+				- If both the letters are in same column, take the letter below each one.
+				- If both the letters are in same row, take the letter next to each one.
+				- If the above rules are not true, form the rectangle with the two letters and take the letters on horizental corner of rectangle.
+				
+			- The decryption is also same we can use the same key.
+			- In decryption after splitting in pairs of two replace the letter with the above one for same column, left one for row and opposite horizental corners for the rectangle.
+			
+	- Hill Cipher:
+		- In Hill cipher basic linear algebra is used.
+		- Each letter is represented by a number modulo 26.
+		
+		- Encryption:
+			- The key is converted into a  square matrix.
+			- The plain text is also converted to a matrix.
+			- To get the encrypted vector we multiply the key matrix with the plain text matrix.
+			- Do the modulo 26 of the encrypted vector.
+			- To get the encrypted text convert the numeric value to letter.
+			
+		- Decryption:
+			- Get the inverse of the key matrix.
+			- Convert the encrypted text to a matrix.
+			- Multiply the inverse of key matrix with the new converted matric.
+			- Do the modulo 26 of the result matrix.
+			- To get the plain text convert the final matrix to letters.
+			
+	- Vignere Cipher:
+		- It uses a polyalphabetic substitution.
+		- First create a 26X26 matrix of letters.
+		- Now generating the key increase the length of keyword by repeating it's letter untill it reaches the length of plain text. 
+		
+		- Encryption:
+			- Take one letter from plain text and one letter from generated key.
+			- See the plain text letter in first column and generated key letter from first row and find the corresponding letter from the table.
+			- The corresponding letter is the encrypted character of first plain text character.
+			- Continue the process untill it reaches to the end of plain text.
+			
+		- Decryption:
+			- Take the encrypted text.
+			- Use the first row for generated matrix and find the cipher character for the character of generated key.
+			- Find the corresponding character from the first column that will be your first character of plain text.
+			- Continue the process untill it reaches the end of cipher text.
+			
+	- Caeser Cipher:
+		- It is the simplest method of encryption technique.
+		- It is a type of substitution cipher, each letter of the plain text is replaced by a letter some fixed number of positions down the alphabet.
+
+		- Encryption:
+			- Suppose you have a plain text to encrypt.
+			- You have a integer n i.e number of positions.(0<=n<=25)
+			- Suppose n=3, convert the plain text character into numeric form and add the value of n to it.
+			- If the value is going above 26 than do the modulo 26. (eg: X - 23 + 12 = 35  --> 35 % 26 = 9 so X converted to I)
+			- Convert the numeric value back to the character i.e that will be the encrypted character for the first letter.
+			- Follow the process untill you reach to the last character of plain text.
+			
+		- Decryption:
+			- Take the first character of the encrypted text.
+			- Convert it into numeric form.
+			- Subtract the value of n from 26 and add the value got in above step.
+			- Convert the numeric to the letter.(eg: I -> 9 + (26 - 12) = 23  --> X)(Note: if value goes above 26 use modulo 26)
+			- Follow the process untill the end is reached.
+			
+			
+	- Substitution Cipher:
+			- In Substitution cipher also we are replacing the character of plain text with other character from the given set of fixed charcters.
+			- Generally we have 26 characters so for one char 26 possibilities, for 2nd char 25 possibilities and go on.
+			- So 26! = 26*25*24......*3*2*1
+			- So we are replacing the character randomly from the list of all characters, and every time we run it is replaced by different character randomly.
+			
+			- Encryption:
+				- the key is generated which have each character mapped to a different character randomly.
+				- Each character of plain text is converted to cipher text with the above generated encryption key.
+				
+			- Decryption:
+				- The decryption key is generated with help of encryption key.
+				- Each letter of cipher text is mapped back to plain text with help of decryption key.
+				
+			Note: Caeser Cipher is special case of Substitution Cipher.
+			
+			
+	- Keyword Cipher:
+			- It is a monoalphabetic substitution.
+			- A keyword is used as key and it determines the letter matchings of the cipher alphabet to plain alphabet.
+			
+			- Encryption:
+				- The first line of input contains the keyword which we have to enter.
+				- The second line contains the plain text.
+				- The keyword is generated firstly the letters of key used and then the rest of plain text followed in order.
+				- The plain alphabets are mapped to the generated keyword.
+				eg: Keyword : KRYPTOS: K R Y P T O S A B C D E F G H I J L M N Q U V W X Z
+				    Plain Alphabets:   A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+				- So now all A's in plain text are mapped to K's in keyword and  so on untill plain text ends.
+				
+			- Decryption:
+				- While decrypting we have to see the generated keyword.
+				- The letter corresponding to it in plain alphabets is mapped.
+				- Do the same untill the cipher text ends.
+				
+			Note: All message are encoded in upper case, no white space, no special characters and no numbers are used in this process.
+			
+	- Stream Cipher:
+			- It converts the plain text by taking 1 byte of plain text at a time.
+			- It uses 8 bits.
+			- It is fast than block cipher but it is complex.
+			- By making the key more longer it is also safe against the brute force attacks.
+			
+			- Encryption:
+				- Plain text and Keystream produces the cipher text(Same Keystream will be used for decryption)
+				- The plain text will undergo XOR operation with keystream bit-by-bit and produces the cipher text.
+				
+			- Decryption:
+				- Cipher text and the keystream produces the plain text.
+				- The Cipher text will undergo XOR operation with keystream bit-by-bit and produces the plain text.
+				
+			eg: One Time Pad algorithm is a stream cipher in which plain text under go XOR with random generated key stream.
+			
+	- Block Cipher:
+		- A block Cipher takes a fixed size input say b bits and produces a cipher text of b bits again.
+		- If a message is larger than b bits than it can divided further and processed in block of b bits.
+		- A block cipher uses 64 bits or more than 64 bits.
+		- The reverse encrypted text is hard but the complexity is simple.
+		
+		- Note: Data Encryption Standard(DES) works on the block cipher algorithm.
+		
+	- DES(Data Encryption Standard):
+		- DES uses Feistel cipher, it uses 16 rounds.
+		- The block size is of 64 bits while the Key length is also 64 bit, DES uses only 56 bits as the remaining 8 bits are not used for encryption.
+		
+		- The broad level steps in DES:
+			- In the first step, the 64 bit plain text block is handed over to an initial Permutation(IP) function.
+			- The initial permutation is performed on plain text.
+			- The initial permutation(IP) produces two halves of the permuted block i.e LPT and RPT(Right Plain Text).
+			- Now each LPT and RPT goes through 16 round of encryption.
+			- In the end, LPT and RPT are rejoined in Final Permutation and the result produces 64 bit cipher text.
+			
+			-  The decryption also have the same steps in reverse order.
+			
+	- Public Key Encryption:
+		- Different keys are used for encryption and decryption this property sets it different from symmetric encryption.
+		- Both the senders and recievers have two keys i.e are Public key and Private key.
+		- The sender shares his public key with the encrypted message.
+		- The main types of Public key Encryption Schemes are:
+			- Diffe-Hellman or ECC
+			- RSA
+			
+		- Diffe-Hellman:
+			- Choose a large prime number p.
+			- Choose a generator element g, for number p such that g is in between 1 and p - 1.
+			- Choose a private key x between 1 and p - 1.
+			- Compute the public key y i.e y = g**x mod p
+			
+			- Encryption: 
+				- Sender sends the message.
+				- Sender generates it's public key and shares it with Reciever.
+				- Sender generates a key by using it's private key and the key shared by Reciever.
+				
+			- Decryption:
+				- Recieves the message.
+				- It also sends it's public key if he is sending something
+				- And it generates a key by using it's private key and senders public key.
+				
+			- It is more efficient fot decryption.
+			
+			
+		- RSA :
+			- It is the most employed cryptosystem even today.
+			- We have to generate the key pair first.
+			
+			- Steps for Key Generation:
+				1. Generate two distinct prime numbers p and q.
+				2. Calculate the modulus n i.e n = p * q.
+				3. Compute lambda(n) i.e λ(n) = lcm(λ(p), λ(q)), λ(p) = p-1, λ(q) = q-1 and lcm(p,q) = p*q/gcd(p,q)
+				4. Choose an integer e such that 1 < e < λ(n) and gcd(e, λ(n)) = 1.
+				5. Choose an integer d such that d.e mod λ(n) = 1 it is the secret key.
+				
+				- Now the keys are:
+					- Public key : (e, n)
+					- Private key : (d, n)
+					
+			- Encryption:
+				- The Sender have the message(m) to send.
+				- The sender sends the public key also i.e (e,n)
+				- The encrypted cipher text is computed as c = m**e mod n
+
+			- Decryption:
+				- The Reciever recives the cipher text(c).
+				- The decryption process use the secret key.
+				- The decryptes message is computed as m = c**d mod n
+				
+				
+	- Hash Functions:
+		- A hash function is a mathematical function that converts a numeric input value into another compressed numeric value.
+		- The hash function can take any size of input and any type of input, it doesn't have to be readable text like this.
+		- Values returned by hash functions are called message digest or hash values.
+		
+		- Properties of Hash Functions:
+			- It is an one-way determinstic function.
+			- The output is dependent on all input bits
+			- Output is uniformly distributed
+			- "Impossible" (difficult) make a collision.
+			- Popular hash functions generate values between 160 and 512 bits.
+			- Computation of hash functions are much faster than the symmetric encryption.
+			
+		-  Hashing Algorithm:
+			- It involves rounds of hash function as block cipher.
+			- Each round takes an input of fixed size, typically a combination of most recent message block and the output of last round.
+			- The hash value of first message block becomes an input to the second hash operation and so on.
+			
+		- Popular Hash Functions:
+			- MD(Message Digest) series and MD5 is the popular one.
+			- Secure Hash Function(SHA) and SHA-2 series are the powerful one like SHA-256 and SHA-512
+		
+		- Applications of Hash Functions:
+			- Digital Signatures
+			- Shadow files(passwords)
+			- HMAC
+			- Make determinstic identifiers
+			- Data Integrity Check
+			
+	
+	- Digital Signatures:
+		- It is a technique that binds an entity to a digital data.
+		- It is a cryptographic value that is created from data and secret key is known only by the signer.
+		
+		- Process:
+			- The Signer feeds the input to the hash function and generates hash of data.
+			- Hash value and signature key are then fed to signature algorithm which produces the digital signature. Signature is appended to data and both are send to verifier.
+			- Verifier feeds the digital signature and verification key into the verification algorithm. It gives some output.
+			- Verifier also runs same hash function on recieved data and it generates some hash value.
+			- The hash value and output of verification algorithm compared and than verifier decides whether the digital signature is valid or not.
+			- Here the signature key is RSA Algorithm's secret key(d) and verification key is public key(e)
+			
+		- Importance:
+			- Message Authentication after verifier validates the signature.
+			- Data Integrity in case of attacker changes the message the digital signature verification fails at verifer end.
+			- Non-Repudation because the signer has only knowledge about the signature key.
+			
+	
+	- HMAC(Hash Message Authentication Code):
+		- It is similar to digital signature they also contains a shared key.
+		- The hash value is generated using the hash function.
+		- The attackers can't attack because if messages changes than the hash value will changes.
+		-
+			
+				

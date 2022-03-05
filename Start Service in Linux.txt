@@ -1,0 +1,140 @@
+											Start a Service Automatically after System Reboot
+
+Introduction:
+1. systemd is the most recent and common service manager used by Linux Distributions.
+2. The Linux service restart automatically after a reboot. Loaded by init deamon.
+3. Runlevels: It represent the current state of linux system.Run levels are denoted by a value b/w 0 to 6.
+	- Runlevel 0 : System Shutdown
+	- Runlevel 1 : Single-user, rescue mode
+	- Runlevel 2,3,4 : Multi-user, text-mode with networking enabled.
+	- Runlevel 5 : Multi-user, network enabled, graphical mode
+	- Runlevel 6 : System reboot
+   - When you enable a service to auto-start, Linux is actually adding it to a runlevel.
+   - In system V the OS will start with a partcular run level; and, when it starts, it will try to start all the services that are associated
+     with that runlevel.
+   - In systemd the run level has become a target and when a service is made auto-start, it's added to a target.
+
+
+Introducing System V init Daemon:
+System V uses an inittab file which have init method.
+1. The init deamon is created from the binary file /sbin/init.
+2. The first file the init deamon reads is /etc/inittab.
+3. One of the entries in this file decides the runlevel the machine should boot into.
+4. The init deamon looks further into the /etc/inittab file and reads what init scripts it need to run for that run level.
+   - When it finds the init script it needs to run for the runlevel, it's actually finding what services it needs to startup.
+   - An init script is what controls a specific service in system V.
+   - init scripts for services were either provided by application's vendor or by Linux distribution.
+   - We can create our own init script for custom created service.
+   - The init script is a shell script. They are also called rc(run command) scripts.The scripts are located under the /etc/init.d directory.
+   - These scripts are symlinked to the /etc/rc directories. Within /etc there are no of rc directories, each with a no in end that represents diff
+     runlevels. So we have /etc/rc0.d, /etc/rc1.d so on till /etc/rc6.d
+   - To make a service restart after a system reboot, add a line this to init script:
+	ms:2345:respawn:/bin/sh /usr/bin/service_name
+   - To enable a system V service to start at system boot time:
+	sudo chkconfig service_name on
+   - To disable, run this command:
+	sudo chkconfig service_name off
+   - To check the status:
+	sudo service service_name status
+
+Introducing the systemd Daemon:
+	- The latest in linux init deamon is systemd. systemd is a framework .
+	- systemd is a framework that encompasses many components of a modern linux system.
+	- systemd is backward compatible with system V. So the system V service will also run under systemd.
+	
+	- systemd Configuration files: Unit files:
+		- Each unit file represents a specific system resource.
+		- Service unit files are simple text files with declarative syntax.
+		- The main diff b/w systemd and other two init methods is that systemd is responsible for service daemons initilization snd other types of resources like 
+		  device operating system, mount points, sockets etc. 
+		- The naming style for a unit file is service_name.unit_type. eg: dbus.service, sshd.socket or home.mount
+		- Unit files resides under /etc/systemd/system if symbolic links created to the same file that are present in lib/systemd/system.
+		
+	- systemd init Sequence : Target Units
+		- A special type of unit file is target unit.
+		- Target unit are different from other unit files because they don't represent one particular resource, rather they represent the state of a system at 
+		  any one time.
+		- Target units do this by grouping and launching multiple unit files that should be part of that state.
+		- Each target has a name instead of a number. eg: we have muti-user.target instead of runlevel 3 or reboot.target instead of runlevel 6.
+		- When a linux server boots with multi-user.target it's essentially bringing the server to runlevel 2, 3 or 4 with multi-user mode with networking enabled.
+		- systemd does not bring up service sequentially. It check for existence of other services and decide order of loading. It loads services in parallel.	
+		- Another difference b/w target units and runlevels is that in system V, a linux system could exist in only one run level.You could change the run level,
+		  but the system would exist in the new runlevel only.
+		- With systemd, target units can be inclusive, which means when a target unit activates, it ensures other target units are loaded as part of it.
+			eg: A linux system boot with graphical user interface will have graphical.target activated, which ensure multi-user.target loaded and activated.
+		-  Different Runlevel in system V init and in systemd:
+			Runlevel(System V init)					Target Units(systemd)
+			runlevel 0								poweroff.target
+			runlevel 1								rescue.target
+			runlevel 2, 3, 4						multi-user.target
+			runlevel 5								graphical.target
+			runlevel 6 								reboot.target
+
+	- systemd default.target:
+		- In systemd we have default.target file.
+		- The default.target file lives under /etc/systemd/system directory. It's symbolic link to one target file under /lib/systemd/system.
+		- In systemd, the default target unit determines which resource units will be loaded at boot time.
+		- As units are activated, they are activated all in parallel or all in sequence. How a resource unit loads may depend on other resource units it
+		  wants or requires.
+		
+	- systemd Dependencies: Wants and Requires
+		- it controls how systemd addresses dependency among service daemons.
+		- The services can be made to load in one or more targets, or wait untill another service or resource become active.
+		- In systemd, a unit that requires another unit will not start untill the required unit is loaded or activated.
+		- If the required unit fails, then the firstly activated unit also stops.
+		
+	- To list default target unit file:
+		- sudo ls -l /etc/systemd/system/default.target  -> Output is the default target is actually a symbolic link to multi-user target file under 
+		  lib/systemd/system.
+		
+	- All the services multi-user.target wants:
+		- sudo ls -l /etc/systemd/system/multi-user.target.wants/*.service
+		
+	- We can start, stop, enable, disable, restart, and reload through these commands we can check the status of the services.
+	- There are specific commands to check the service:
+		- is-active : if a unit is currently active and running
+		- is-enabled : to check if a unit is enabled or not
+		- is-failed: to check whether the unit is failed
+	
+	- To list all active units that systemd knows:
+		- systemctl list-units
+		- systemctl list-units --all:
+			- It will show any unit systemd loaded regardless of it's state
+			- We can use other flags also to filter the results
+				- systemctl list-units -all --state=inactive/active
+				- systemctl list-units --type=service
+				Note: Some units become inactive after running, and some units that systemd attempted to load may have not been found on disk.
+				
+	- Listing all unit files:
+		- systemctl list-unit-files : lists all the file that systemd unable to load.
+		- The output gives two information unit name and state.
+		- The state usually be static, enabled, disabled and masked.
+			- Static means the file does not contain install section, which is used to enable a unit. So these units can not be enabled.So these units act
+			  as a dependency of another unit and should not run by itself.
+			- Masked means as long the state is masked the service can not be started manually or automatically.
+			
+	
+	- Displaying Dependencies:
+		- systemctl list-dependencies service name
+			- This will display a hierarchy mapping the dependencies that must dealt with in order to start the unit.
+			- The recursive dependencies are only displayed for .target units
+			- To show the reverse dependencies use the reverse flags
+			- If you want to display a single property you can pass the p flag 
+				- systemctl show service_name -p property_name
+			
+	- Masking and Unmasking units:
+		- When a service is masked a symbolic created to /dev/null
+		- mask: systemctl mask service_name
+		- So now when we want to start the service it will fail and gives error.
+		- unmask: systemctl unmask service_name
+		
+	- Editing Unit files:
+		- To edit a unit file use edit command	
+			- systemctl edit service_name
+				- After this command a blank file created. A directory will be created with in the /etc/systemd/system with name of service appended with .d
+				- In this directory a snippet will be created called ocerride.conf. When the unit is loaded systemd will, in memory merge the overdie with 
+				  full unit file.
+		- If we want to edit full unit file then pass full flag	
+			- systemctl edit --full service_name
+		- To remove any additions we made either delete the .d directory or the modified service.
+		- After deleting reload the systemd daemon thread.
