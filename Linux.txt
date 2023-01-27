@@ -252,7 +252,10 @@
     	 - swapon or swapoff
 
     ~ RAID(Redundant Array of Independent Disks):
-    	RAID (redundant array of independent disks) is a way of storing the same data in different places on multiple hard disks or solid-state drives 	(SSDs) to protect data in the case of a drive failure. 
+    	RAID (redundant array of independent disks) is a way of storing the same data in different places on multiple hard disks or 
+	solid-state drives (SSDs) to protect data in the case of a drive failure. 
+	RAID employs the techniques of disk mirroring or disk striping. Mirroring will copy identical data onto more than one drive. 
+	Striping partitions help spread data over multiple disk drives. Each drive's storage space is divided into units ranging from a sector of 512 bytes
     	- Types of RAID:
     		- RAID0:
     			- Here we add up the disks to increase size and the read write operation
@@ -262,7 +265,7 @@
     			- But the read/write operation are slow
     			- We have data in case of disk failure
     		- RAID5
-    			- Here we add the disk and do the mirroring also
+    			- Here we add the disk and do the mirroring and data striping also
     			- We have more memory and read/write operation
     			- it solves the problem of both the cases
 
