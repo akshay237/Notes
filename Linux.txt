@@ -252,6 +252,7 @@
     	 - swapon or swapoff
 
     ~ RAID(Redundant Array of Independent Disks):
+    	RAID (redundant array of independent disks) is a way of storing the same data in different places on multiple hard disks or solid-state drives 	(SSDs) to protect data in the case of a drive failure. 
     	- Types of RAID:
     		- RAID0:
     			- Here we add up the disks to increase size and the read write operation
